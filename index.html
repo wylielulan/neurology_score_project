@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neurology Score Project by Wylie Neuro</title>
+<style>
+:root{--bg:#18181b;--s1:#1f1f23;--s2:#27272a;--s3:#2a2a2e;--bd:#3f3f46;--acc:#d4d4d8;--acc-rgb:212,212,216;--acc2:#a78bfa;--acc3:#10b981;--acc4:#f59e0b;--acc5:#ef4444;--acc6:#ec4899;--txt:#f4f4f5;--dim:#a1a1aa;--mut:#71717a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:'IBM Plex Sans','Segoe UI',system-ui,-apple-system,sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(var(--acc-rgb),.025) 1px,transparent 1px),linear-gradient(90deg,rgba(var(--acc-rgb),.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0}
+
+/* HEADER */
+.hdr{position:relative;z-index:10;padding:36px 40px 20px;border-bottom:1px solid var(--bd);background:linear-gradient(180deg,rgba(var(--acc-rgb),.06) 0%,transparent 100%)}
+.badge{font-family:'IBM Plex Mono','Courier New',monospace;font-size:10px;letter-spacing:3px;color:var(--acc);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.badge::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--acc);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(var(--acc-rgb),.4)}50%{opacity:.7;box-shadow:0 0 0 6px rgba(var(--acc-rgb),0)}}
+h1{font-size:clamp(22px,3.5vw,40px);font-weight:700;letter-spacing:-1px;line-height:1.1;background:linear-gradient(135deg,#fff 30%,var(--acc) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{margin-top:6px;font-size:12px;color:var(--mut);font-weight:300}
+.stats-row{display:flex;gap:28px;margin-top:20px;flex-wrap:wrap}
+.stat .n{font-family:'IBM Plex Mono','Courier New',monospace;font-size:26px;font-weight:600;color:var(--acc);line-height:1}
+.stat .l{font-size:10px;color:var(--mut);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+
+/* CONTROLS */
+.ctrl{position:sticky;top:0;z-index:20;padding:14px 40px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--bd);background:rgba(24,24,27,.92);backdrop-filter:blur(12px)}
+.sw{position:relative;flex:1;min-width:180px;max-width:360px}
+.sw svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--mut);width:13px;height:13px}
+#srch{width:100%;background:var(--s1);border:1px solid var(--bd);border-radius:6px;padding:8px 11px 8px 32px;color:var(--txt);font-family:'IBM Plex Sans','Segoe UI',system-ui,-apple-system,sans-serif;font-size:12px;outline:none;transition:border-color .2s}
+#srch:focus{border-color:var(--acc)}
+#srch::placeholder{color:var(--mut)}
+.fb{background:var(--s1);border:1px solid var(--bd);border-radius:6px;padding:7px 12px;color:var(--mut);font-size:11px;cursor:pointer;font-family:'IBM Plex Sans','Segoe UI',system-ui,-apple-system,sans-serif;font-weight:500;letter-spacing:.5px;transition:all .2s;white-space:nowrap}
+.fb:hover{border-color:var(--acc);color:var(--acc)}
+.fb.on{background:rgba(var(--acc-rgb),.1);border-color:var(--acc);color:var(--acc)}
+
+/* MAIN */
+.main{position:relative;z-index:5;padding:28px 40px 80px;max-width:1600px;margin:0 auto}
+.section{margin-bottom:36px}
+.sec-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--bd)}
+.sdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.stitle{font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--dim)}
+.scnt{font-family:'IBM Plex Mono','Courier New',monospace;font-size:9px;color:var(--mut);background:var(--s1);border:1px solid var(--bd);border-radius:20px;padding:2px 7px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:9px}
+
+/* SCORE CARD */
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:13px 14px 11px;transition:all .2s;cursor:pointer;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:8px 0 0 8px}
+.card:hover{border-color:rgba(var(--acc-rgb),.3);background:var(--s2);transform:translateY(-1px);box-shadow:0 4px 24px rgba(0,0,0,.35)}
+.card.has-calc::after{content:'CALC';position:absolute;top:10px;right:10px;font-family:'IBM Plex Mono','Courier New',monospace;font-size:8px;font-weight:600;letter-spacing:1.5px;padding:2px 6px;border-radius:3px;background:rgba(var(--acc-rgb),.1);color:var(--acc);border:1px solid rgba(var(--acc-rgb),.25)}
+.cn{font-weight:600;font-size:13px;color:var(--txt);margin-bottom:2px}
+.cf{font-size:10px;color:var(--mut);line-height:1.4;margin-bottom:5px}
+.cu{font-size:11px;color:var(--dim);line-height:1.4}
+.tags{display:flex;gap:4px;margin-top:7px;flex-wrap:wrap}
+.tag{font-size:9px;font-family:'IBM Plex Mono','Courier New',monospace;letter-spacing:.5px;text-transform:uppercase;padding:2px 5px;border-radius:3px;font-weight:600}
+.tag-prognosis{background:rgba(16,185,129,.15);color:#10b981}
+.tag-diagnosis{background:rgba(var(--acc-rgb),.12);color:var(--acc)}
+.tag-severity{background:rgba(245,158,11,.15);color:#f59e0b}
+.tag-treatment{background:rgba(124,58,237,.15);color:#a78bfa}
+.tag-monitoring{background:rgba(236,72,153,.15);color:#ec4899}
+.tag-screening{background:rgba(239,68,68,.12);color:#ef4444}
+.ref{font-size:9px;color:var(--mut);font-family:'IBM Plex Mono','Courier New',monospace;margin-top:5px;padding-top:5px;border-top:1px solid rgba(255,255,255,.05);line-height:1.3}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(4px)}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{position:fixed;right:0;top:0;bottom:0;width:min(520px,100vw);background:var(--s1);border-left:1px solid var(--bd);z-index:101;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden}
+.modal.open{transform:translateX(0)}
+.modal-hdr{padding:20px 24px 16px;border-bottom:1px solid var(--bd);background:var(--s1);z-index:5;flex-shrink:0}
+.modal-badge{font-family:'IBM Plex Mono','Courier New',monospace;font-size:9px;letter-spacing:2px;color:var(--acc);text-transform:uppercase;margin-bottom:6px}
+.modal-title{font-size:20px;font-weight:700;color:var(--txt);line-height:1.2}
+.modal-sub{font-size:11px;color:var(--mut);margin-top:3px;line-height:1.4}
+.modal-close{position:absolute;right:20px;top:20px;width:30px;height:30px;background:var(--s2);border:1px solid var(--bd);border-radius:6px;cursor:pointer;color:var(--dim);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-close:hover{border-color:var(--acc5);color:var(--acc5)}
+.modal-body{padding:16px 24px;flex:1;overflow-y:auto;min-height:0}
+
+/* FORM */
+.fgroup{margin-bottom:14px}
+.flabel{font-size:11px;font-weight:600;color:var(--dim);margin-bottom:5px;display:flex;align-items:center;gap:6px;letter-spacing:.3px}
+.fnote{font-size:10px;color:var(--mut);font-weight:400;font-style:italic}
+select.fi,input.fi{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:6px;padding:8px 10px;color:var(--txt);font-family:'IBM Plex Sans','Segoe UI',system-ui,-apple-system,sans-serif;font-size:12px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+select.fi{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+select.fi:focus,input.fi:focus{border-color:var(--acc)}
+.radio-group{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.radio-opt{display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--bd);border-radius:6px;padding:7px 10px;cursor:pointer;transition:all .15s;font-size:11px;color:var(--dim)}
+.radio-opt:hover{border-color:var(--acc);color:var(--txt)}
+.radio-opt.sel{border-color:var(--acc);background:rgba(var(--acc-rgb),.08);color:var(--acc)}
+.radio-opt input{display:none}
+.radio-dot{width:8px;height:8px;border-radius:50%;border:1.5px solid currentColor;flex-shrink:0;transition:all .15s}
+.radio-opt.sel .radio-dot{background:var(--acc);border-color:var(--acc)}
+/* ASPECTS region toggle */
+.aspect-hint{font-size:11px;color:var(--mut);margin:0 0 8px;font-style:italic;line-height:1.5}
+.aspect-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;align-items:start}
+.aspect-col{display:flex;flex-direction:column;gap:8px}
+.aspect-chip{position:relative;background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:10px 6px;cursor:pointer;text-align:center;font-size:13px;font-weight:700;color:var(--dim);transition:all .15s;user-select:none;letter-spacing:.3px}
+.aspect-chip:hover{border-color:var(--acc);color:var(--txt)}
+.aspect-chip.hit{background:rgba(239,68,68,.18);border-color:#ef4444;color:#fca5a5;box-shadow:0 0 12px rgba(239,68,68,.18) inset}
+.aspect-chip .ac-tip{display:block;font-size:9px;font-weight:400;color:var(--mut);margin-top:3px;font-style:italic;line-height:1.2;letter-spacing:0}
+.aspect-chip.hit .ac-tip{color:#fca5a5}
+.aspect-tally{display:flex;justify-content:space-between;align-items:center;background:var(--s2);border:1px dashed var(--bd);border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:11px;color:var(--dim)}
+.aspect-tally strong{color:var(--acc);font-family:'IBM Plex Mono','Courier New',monospace;font-size:14px}
+
+/* FORMULA BOX */
+.formula-box{background:rgba(var(--acc-rgb),.05);border:1px solid rgba(var(--acc-rgb),.15);border-radius:6px;padding:10px 12px;margin-bottom:16px;font-family:'IBM Plex Mono','Courier New',monospace;font-size:10px;color:var(--dim);line-height:1.5}
+.formula-box strong{color:var(--acc);font-weight:600}
+
+/* CALC BTN */
+.calc-btn{width:100%;background:linear-gradient(135deg,rgba(var(--acc-rgb),.2),rgba(var(--acc-rgb),.08));border:1px solid rgba(var(--acc-rgb),.4);border-radius:8px;padding:12px;color:var(--acc);font-family:'IBM Plex Sans','Segoe UI',system-ui,-apple-system,sans-serif;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.5px;transition:all .2s;margin-top:4px}
+.calc-btn:hover{background:linear-gradient(135deg,rgba(var(--acc-rgb),.3),rgba(var(--acc-rgb),.12));box-shadow:0 0 20px rgba(var(--acc-rgb),.2)}
+
+/* RESULT */
+.result-box{margin-top:16px;border-radius:10px;overflow:hidden;display:none}
+.result-box.show{display:block}
+.res-top{padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.res-score{font-family:'IBM Plex Mono','Courier New',monospace;font-size:18px;font-weight:600;line-height:1.2;opacity:.85}
+.res-grade{font-size:22px;font-weight:700;margin-top:6px;line-height:1.3}
+.res-icon{font-size:28px}
+.res-detail{padding:12px 18px;font-size:12px;line-height:1.6;border-top:1px solid rgba(255,255,255,.08)}
+.subscores{padding:10px 18px 14px}
+.subscore-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:11px}
+.subscore-row:last-child{border-bottom:none}
+.subscore-lbl{color:var(--dim)}
+.subscore-val{font-family:'IBM Plex Mono','Courier New',monospace;font-weight:600;color:var(--txt)}
+
+/* COPY BTN */
+.copy-btn{display:flex;align-items:center;gap:8px;width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:10px 14px;color:var(--dim);font-family:'IBM Plex Sans','Segoe UI',system-ui,-apple-system,sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;margin-top:10px;justify-content:center}
+.copy-btn:hover{border-color:var(--acc3);color:var(--acc3)}
+.copy-btn.copied{border-color:var(--acc3);color:var(--acc3);background:rgba(16,185,129,.08)}
+.copy-btn svg{width:13px;height:13px;flex-shrink:0}
+
+/* REF PANEL */
+.ref-panel{background:rgba(255,255,255,.02);border:1px solid var(--bd);border-radius:8px;padding:14px;margin-top:4px}
+.ref-panel h4{font-size:11px;font-weight:600;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.grade-row{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:11px;line-height:1.4}
+.grade-row:last-child{border-bottom:none}
+.grade-num{font-family:'IBM Plex Mono','Courier New',monospace;font-weight:600;flex-shrink:0;min-width:42px}
+.grade-desc{color:var(--dim)}
+
+/* DIVIDER */
+.sec-divider{height:1px;background:linear-gradient(90deg,transparent,var(--bd),transparent);margin:8px 0}
+
+/* REF SOURCE */
+.modal-ref{padding:14px 24px 20px;border-top:1px solid var(--bd);flex-shrink:0;background:var(--s1)}
+.modal-ref p{font-family:'IBM Plex Mono','Courier New',monospace;font-size:9px;color:var(--mut);line-height:1.5}
+
+/* NO RESULTS */
+.nores{text-align:center;padding:60px 20px;color:var(--mut);font-size:13px;display:none}
+
+/* ===== mRS / Hunt & Hess REF TABLE ===== */
+.ref-panel[data-ref="mRS"] .grade-row,
+.ref-panel[data-ref="Hunt & Hess"] .grade-row{align-items:center;padding:10px 0;gap:16px}
+.ref-panel[data-ref="mRS"] .grade-num,
+.ref-panel[data-ref="Hunt & Hess"] .grade-num{font-size:22px;font-weight:700;min-width:34px;text-align:center}
+.ref-panel[data-ref="mRS"] .grade-desc,
+.ref-panel[data-ref="Hunt & Hess"] .grade-desc{font-size:12px;line-height:1.5}
+.ref-panel[data-ref="mRS"] .grade-desc strong,
+.ref-panel[data-ref="Hunt & Hess"] .grade-desc strong{color:var(--txt);font-weight:700;font-size:13px;display:block;margin-bottom:2px}
+
+/* ===== NIHSS DEDICATED UI ===== */
+#m-body:has(.nihss-score-box) .formula-box{margin-bottom:8px}
+.nihss-score-box{position:sticky;top:-1px;z-index:4;display:flex;align-items:stretch;gap:10px;background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:8px 12px;margin:-4px 0 10px;box-shadow:0 6px 14px -8px rgba(0,0,0,.6)}
+.nihss-score-left{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:60px;line-height:1}
+.nihss-score-cap{font-size:8px;font-weight:600;letter-spacing:2px;color:var(--mut);text-transform:uppercase}
+.nihss-score-num{font-family:'IBM Plex Mono','Courier New',monospace;font-weight:700;font-size:34px;line-height:1.05;color:#10b981;transition:color .25s}
+.nihss-score-max{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--mut);letter-spacing:.5px;line-height:1}
+.nihss-score-right{flex:1;display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0}
+.nihss-grade-pill{border:1.5px solid #10b981;color:#10b981;background:rgba(16,185,129,.06);border-radius:7px;padding:6px 10px;font-weight:700;font-size:12px;letter-spacing:.4px;text-transform:uppercase;line-height:1.15;transition:all .25s}
+.nihss-range{font-size:10px;color:var(--mut);padding-left:2px;letter-spacing:.3px;line-height:1}
+.nihss-progress{height:2px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:4px;overflow:hidden}
+.nihss-progress-bar{height:100%;width:0;background:#10b981;border-radius:2px;transition:width .25s,background-color .25s}
+
+.nihss-item{background:rgba(255,255,255,.015);border:1px solid var(--bd);border-radius:8px;margin-bottom:6px;overflow:hidden;transition:border-color .15s}
+.nihss-item:hover{border-color:rgba(var(--acc-rgb),.25)}
+.nihss-item-head{width:100%;background:transparent;border:0;display:flex;align-items:center;gap:8px;padding:8px 10px;cursor:pointer;color:var(--txt);font-family:inherit;text-align:left;line-height:1.2}
+.nihss-num{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:20px;padding:0 6px;border:1px solid var(--acc);color:var(--acc);background:rgba(var(--acc-rgb),.06);border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.3px}
+.nihss-title{flex:1;font-size:12px;font-weight:700;color:var(--txt);line-height:1.25}
+.nihss-note{font-size:10px;font-weight:400;color:var(--mut);font-style:italic;margin-left:5px}
+.nihss-caret{flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-size:16px;color:var(--acc);font-weight:300;width:12px;text-align:center;transition:transform .2s;line-height:1}
+.nihss-item.collapsed .nihss-caret{transform:rotate(45deg)}
+.nihss-item-body{padding:0 6px 6px;display:flex;flex-direction:column;gap:2px}
+.nihss-item.collapsed .nihss-item-body{display:none}
+.nihss-opt{display:flex;align-items:center;gap:10px;padding:5px 10px;border-radius:6px;cursor:pointer;transition:background-color .12s;color:var(--dim);font-size:11.5px;line-height:1.3}
+.nihss-opt:hover{background:rgba(255,255,255,.025)}
+.nihss-opt.sel{background:rgba(var(--acc-rgb),.07);color:var(--txt)}
+.nihss-radio{flex-shrink:0;width:13px;height:13px;border-radius:50%;border:1.5px solid var(--mut);transition:all .15s;position:relative}
+.nihss-opt:hover .nihss-radio{border-color:var(--dim)}
+.nihss-opt.sel .nihss-radio{border-color:var(--acc)}
+.nihss-opt.sel .nihss-radio::after{content:'';position:absolute;inset:2.5px;border-radius:50%;background:var(--acc)}
+.nihss-val{flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--dim);min-width:12px;text-align:center;font-size:11px}
+.nihss-opt.sel .nihss-val{color:var(--acc)}
+.nihss-lbl{flex:1}
+
+@media(max-width:768px){.hdr,.ctrl,.main{padding-left:16px;padding-right:16px}.grid{grid-template-columns:1fr}.modal{width:100vw}.nihss-score-num{font-size:38px}.nihss-grade-pill{font-size:11px;padding:8px 10px}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="badge">Wylie Neuro · Interactive Clinical Calculator</div>
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap">
+    <div>
+      <h1>Neurology Score<br>Project</h1>
+      <p class="sub" style="margin-top:4px">by <span style="color:var(--acc);font-family:'IBM Plex Mono','Courier New',monospace;font-weight:600;letter-spacing:1px">Wylie Neuro</span> &nbsp;·&nbsp; Evidence-based Clinical Reference &nbsp;·&nbsp; Klik <span style="color:var(--acc);font-size:10px;font-family:'IBM Plex Mono','Courier New',monospace">CALC</span> = kalkulator interaktif</p>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><div class="n" id="tScores">0</div><div class="l">Total Score</div></div>
+    <div class="stat"><div class="n" id="tCalc">0</div><div class="l">Kalkulator</div></div>
+    <div class="stat"><div class="n" id="tDiv">0</div><div class="l">Divisi</div></div>
+    <div class="stat"><div class="n" id="tShow">0</div><div class="l">Ditampilkan</div></div>
+  </div>
+</div>
+
+<div class="ctrl">
+  <div class="sw">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+    <input type="text" id="srch" placeholder="Cari score, singkatan, fungsi...">
+  </div>
+  <button class="fb on" data-f="all">Semua</button>
+  <button class="fb" data-f="diagnosis">Diagnosis</button>
+  <button class="fb" data-f="severity">Severity</button>
+  <button class="fb" data-f="prognosis">Prognosis</button>
+  <button class="fb" data-f="treatment">Treatment</button>
+  <button class="fb" data-f="monitoring">Monitoring</button>
+</div>
+
+<div class="main" id="main">
+  <div class="nores" id="nores">Tidak ada score yang ditemukan.</div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay"></div>
+<div class="modal" id="modal">
+  <div class="modal-hdr">
+    <div class="modal-badge" id="m-badge">Calculator</div>
+    <div class="modal-title" id="m-title">Score</div>
+    <div class="modal-sub" id="m-sub">Full name</div>
+    <button class="modal-close" id="modal-close-btn">✕</button>
+  </div>
+  <div class="modal-body" id="m-body"></div>
+  <div class="modal-ref"><p id="m-ref"></p></div>
+</div>
+
+<script src="scores.js"></script>
+</body>
+</html>

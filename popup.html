@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wylie Neuro</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --bg: #18181b;
+    --s1: #1f1f23;
+    --s2: #27272a;
+    --s3: #2a2a2e;
+    --bd: #3f3f46;
+    --acc: #d4d4d8;
+    --acc-rgb: 212,212,216;
+    --acc-dim: rgba(212,212,216,0.10);
+    --txt: #f4f4f5;
+    --dim: #a1a1aa;
+    --mut: #71717a;
+    --calc: #10b981;
+  }
+
+  body {
+    width: 360px;
+    min-height: 80px;
+    max-height: 560px;
+    background: var(--bg);
+    color: var(--txt);
+    font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* HEADER */
+  .header {
+    padding: 14px 16px 10px;
+    background: linear-gradient(180deg, rgba(var(--acc-rgb),0.06) 0%, transparent 100%);
+    border-bottom: 1px solid var(--bd);
+    flex-shrink: 0;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .brand-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--acc);
+    box-shadow: 0 0 8px var(--acc);
+    animation: pulse 2s infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity:1; box-shadow: 0 0 6px var(--acc); }
+    50% { opacity:.6; box-shadow: 0 0 14px var(--acc); }
+  }
+
+  .brand-name {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--acc);
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  }
+
+  .brand-sub {
+    font-size: 9px;
+    color: var(--mut);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* SEARCH */
+  .search-wrap {
+    position: relative;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px; height: 14px;
+    color: var(--mut);
+    pointer-events: none;
+  }
+
+  #search {
+    width: 100%;
+    background: var(--s1);
+    border: 1px solid var(--bd);
+    border-radius: 8px;
+    padding: 9px 36px 9px 34px;
+    color: var(--txt);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+  }
+
+  #search:focus {
+    border-color: var(--acc);
+    box-shadow: 0 0 0 2px rgba(var(--acc-rgb),0.12);
+  }
+
+  #search::placeholder { color: var(--mut); }
+
+  .clear-btn {
+    position: absolute;
+    right: 9px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px; height: 20px;
+    background: var(--s2);
+    border: none;
+    border-radius: 4px;
+    color: var(--mut);
+    cursor: pointer;
+    font-size: 12px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .clear-btn:hover { color: var(--txt); background: var(--bd); }
+  .clear-btn.show { display: flex; }
+
+  /* RESULTS */
+  .results {
+    overflow-y: auto;
+    flex: 1;
+    max-height: 440px;
+  }
+
+  .results::-webkit-scrollbar { width: 4px; }
+  .results::-webkit-scrollbar-track { background: transparent; }
+  .results::-webkit-scrollbar-thumb { background: var(--bd); border-radius: 2px; }
+
+  /* EMPTY STATE */
+  .empty {
+    padding: 28px 20px;
+    text-align: center;
+    color: var(--mut);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .empty-icon { font-size: 28px; margin-bottom: 8px; display: block; opacity: 0.5; }
+
+  /* INITIAL STATE */
+  .initial {
+    padding: 16px;
+  }
+
+  .section-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--mut);
+    padding: 8px 14px 5px;
+  }
+
+  /* SCORE ITEM */
+  .score-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 14px;
+    cursor: pointer;
+    transition: background 0.12s;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    position: relative;
+  }
+
+  .score-item:hover,
+  .score-item.active {
+    background: var(--s2);
+  }
+
+  .score-item.active {
+    background: rgba(var(--acc-rgb),0.06);
+  }
+
+  .score-item:last-child { border-bottom: none; }
+
+  .item-left {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .item-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--txt);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .item-full {
+    font-size: 10px;
+    color: var(--dim);
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .item-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+    flex-shrink: 0;
+  }
+
+  .div-badge {
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--mut);
+    background: var(--s2);
+    border: 1px solid var(--bd);
+    border-radius: 3px;
+    padding: 1px 5px;
+    max-width: 90px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: right;
+  }
+
+  .calc-badge {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--calc);
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.25);
+    border-radius: 3px;
+    padding: 1px 5px;
+  }
+
+  /* MATCH HIGHLIGHT */
+  mark {
+    background: rgba(var(--acc-rgb),0.18);
+    color: var(--acc);
+    border-radius: 2px;
+    font-style: normal;
+  }
+
+  /* KEYBOARD HINT */
+  .kbd-hint {
+    font-size: 9px;
+    color: var(--mut);
+    padding: 7px 14px;
+    border-top: 1px solid var(--bd);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-shrink: 0;
+    background: rgba(0,0,0,0.2);
+  }
+
+  .kbd {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 9px;
+    color: var(--dim);
+  }
+
+  kbd {
+    background: var(--s2);
+    border: 1px solid var(--bd);
+    border-radius: 3px;
+    padding: 1px 4px;
+    font-size: 9px;
+    font-family: inherit;
+    color: var(--dim);
+  }
+
+  /* OPEN ALL */
+  .open-all {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    color: var(--acc);
+    font-size: 11px;
+    font-weight: 600;
+    border-top: 1px solid var(--bd);
+    background: transparent;
+    width: 100%;
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+    transition: background 0.15s;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+
+  .open-all:hover { background: var(--acc-dim); }
+
+  .open-all svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+  /* COUNT */
+  .result-count {
+    font-size: 9px;
+    color: var(--mut);
+    padding: 6px 14px 3px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  /* DIVIDER label inside initial */
+  .recent-header {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--mut);
+    text-transform: uppercase;
+    padding: 4px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .recent-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--bd);
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">
+    <div class="brand-dot"></div>
+    <div>
+      <div class="brand-name">Wylie Neuro</div>
+      <div class="brand-sub">Neurology Score Calculator</div>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+    </svg>
+    <input type="text" id="search" placeholder="Cari score... (NIHSS, GCS, mRS...)" autocomplete="off" spellcheck="false" autofocus>
+    <button class="clear-btn" id="clear-btn" title="Hapus">✕</button>
+  </div>
+</div>
+
+<div class="results" id="results"></div>
+
+<button class="open-all" id="open-all">
+  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h10"/>
+  </svg>
+  Buka Semua Score
+</button>
+
+<div class="kbd-hint">
+  <span class="kbd"><kbd>↑</kbd><kbd>↓</kbd> Navigasi</span>
+  <span class="kbd"><kbd>Enter</kbd> Buka Popup</span>
+  <span class="kbd"><kbd>Esc</kbd> Tutup</span>
+</div>
+
+<script src="scores-data.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Wylie Neuro — Score Calculator",
+  "short_name": "Wylie Neuro",
+  "description": "Quick search & interactive calculator for neurology scoring systems. By Wylie Neuro.",
+  "version": "1.1.0",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "Wylie Neuro Score Calculator"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": ["windows"],
+  "host_permissions": [],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}
