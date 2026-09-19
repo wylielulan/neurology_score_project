@@ -1,6 +1,6 @@
 # Wylie Neuro — Score Calculator
 
-Ekstensi Chrome untuk pencarian cepat dan kalkulator interaktif berbagai *scoring system* di bidang neurologi. Dibuat untuk membantu residen dan dokter neurologi mengakses skor klinis dengan cepat langsung dari toolbar browser.
+Ekstensi Chrome untuk pencarian cepat dan kalkulator interaktif berbagai *scoring system* di bidang neurologi. Dibuat untuk membantu residen dan dokter neurologi mengakses skor klinis dengan cepat langsung dari toolbar browser. tanpa perlu online, bisa digunakan dalam jaringan wifi lokal yang tidak dapat mengakses internet.
 
 ##  Fitur
 
